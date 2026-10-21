@@ -1869,28 +1869,6 @@
  },
  {
   "argomenti": [
-   "Psicologia perinatale"
-  ],
-  "citta": null,
-  "costo": 1600,
-  "crediti": 100,
-  "dataFine": "2028-12-31",
-  "dataInizio": null,
-  "docenti": null,
-  "ecm": true,
-  "ente": "Psicologia.io (Giunti)",
-  "fonte": "ricerca-ott-2026",
-  "modalita": "online",
-  "notaCosto": "Singolo modulo 850 € · fino a 10 rate",
-  "quando": "On demand, 24 mesi dall'iscrizione (ECM fino al 31/12/2028)",
-  "regione": null,
-  "tipo": "Master (ente privato)",
-  "titolo": "Master asincrono in Psicologia e Psicopatologia Perinatale",
-  "url": "https://www.psicologia.io/master/master-asincrono-psicologia-e-psicopatologia-perinatale",
-  "id": "psicologiaio-perinatale"
- },
- {
-  "argomenti": [
    "Età evolutiva e adolescenza",
    "Psicoanalisi"
   ],
