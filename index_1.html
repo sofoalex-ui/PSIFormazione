@@ -1,0 +1,559 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="PsiFormazione: corsi, workshop e master per psicologi e psicoterapeuti in Italia, divisi per argomento, regione, costo, crediti ECM e modalità.">
+<meta property="og:title" content="PsiFormazione">
+<meta property="og:description" content="Corsi, workshop e master per psicologi e psicoterapeuti in Italia.">
+<meta property="og:image" content="asipp.png">
+<link rel="icon" href="asipp.png">
+<script defer src="/_vercel/insights/script.js"></script>
+<title>PsiFormazione</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700&family=Atkinson+Hyperlegible:wght@400;700&display=swap">
+<style>
+/* Layout: one calm column — topics first, then the filtered list; filters sit in a sticky bar */
+:root{
+  --bg:#F3F6F5; --surface:#FFFFFF; --ink:#12302D; --muted:#5A6F6B; --line:#D9E2DF;
+  --accent:#0D6070; --accent-ink:#FFFFFF; --accent-soft:#E0EEF0;
+  --ecm:#5B3F98; --ecm-soft:#EEE9F8; --free:#1F7A45; --free-soft:#E3F3E9; --warn:#9A5B00;
+  --display:"Bricolage Grotesque", "Avenir Next", "Segoe UI", system-ui, sans-serif;
+  --body:"Atkinson Hyperlegible", "Segoe UI", system-ui, -apple-system, sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0E1716; --surface:#16211F; --ink:#E4EEEB; --muted:#9AB0AB; --line:#2A3A37;
+  --accent:#5FC1D1; --accent-ink:#06292F; --accent-soft:#163238;
+  --ecm:#BBA5F0; --ecm-soft:#2A2240; --free:#6FD69A; --free-soft:#173325; --warn:#E7B464; color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0E1716; --surface:#16211F; --ink:#E4EEEB; --muted:#9AB0AB; --line:#2A3A37;
+  --accent:#5FC1D1; --accent-ink:#06292F; --accent-soft:#163238;
+  --ecm:#BBA5F0; --ecm-soft:#2A2240; --free:#6FD69A; --free-soft:#173325; --warn:#E7B464; color-scheme:dark }
+
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+img{max-width:100%}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.5;margin:0}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:10;background:var(--bg)}
+.wrap{max-width:860px;margin:0 auto;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:20px 64px}
+h1,h2,h3{font-family:var(--display);text-wrap:balance;margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px;border-radius:8px}
+
+header.top{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.brand{display:flex;flex-direction:column;gap:2px}
+.brand h1{font-size:1.65rem;font-weight:700;letter-spacing:-.01em}
+.brand h1 span{color:var(--accent)}
+.brand p{margin:0;color:var(--muted);font-size:.95rem}
+.btn{border:0;border-radius:999px;padding:10px 18px;font-weight:700;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:transparent;color:var(--accent);border:1.5px solid var(--accent)}
+.btn:disabled{opacity:.5;cursor:default}
+
+.views{display:grid;grid-template-columns:1fr 1fr;gap:4px;margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:4px}
+.views button{border:0;background:transparent;border-radius:10px;padding:11px 10px;font-family:var(--display);font-weight:700;font-size:1.02rem;cursor:pointer;color:var(--muted)}
+.views button[aria-selected="true"]{background:var(--accent);color:var(--accent-ink)}
+.mintro{margin:10px 0 0;color:var(--muted);font-size:.92rem}
+.search{margin-top:14px;position:relative}
+.search input{width:100%;padding:14px 16px 14px 44px;border-radius:14px;border:1.5px solid var(--line);background:var(--surface);font-size:1rem}
+.search svg{position:absolute;left:14px;top:50%;transform:translateY(-50%);width:20px;height:20px;stroke:var(--muted);fill:none;stroke-width:2}
+
+.section-label{font-size:.78rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700;margin:26px 0 10px}
+.topics{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px}
+.topic{display:flex;justify-content:space-between;align-items:center;gap:8px;text-align:left;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);background:var(--surface);cursor:pointer;font-weight:700;font-size:.95rem;min-width:0}
+.topic .n{font-weight:400;color:var(--muted);font-size:.85rem;font-variant-numeric:tabular-nums}
+.topic[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.topic[aria-pressed="true"] .n{color:var(--accent-ink);opacity:.85}
+.topic:hover{border-color:var(--accent)}
+
+.filters{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding-block:12px;margin-top:22px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:10px}
+.frow{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
+.frow::-webkit-scrollbar{display:none}
+.fgroup{display:flex;gap:4px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:3px;flex:none}
+.fgroup button{border:0;background:transparent;border-radius:999px;padding:6px 12px;cursor:pointer;font-size:.88rem;white-space:nowrap;color:var(--muted)}
+.fgroup button[aria-pressed="true"]{background:var(--accent-soft);color:var(--ink);font-weight:700}
+.frow select{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:7px 12px;font-size:.88rem}
+
+.results-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:18px 0 10px;flex-wrap:wrap}
+.results-head h2{font-size:1.25rem}
+.results-head .count{color:var(--muted);font-size:.92rem}
+.linkish{background:none;border:0;color:var(--accent);cursor:pointer;font-weight:700;padding:0;font-size:.92rem}
+
+.list{display:flex;flex-direction:column;gap:10px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.card h3{font-size:1.08rem;line-height:1.3;font-weight:700}
+.meta{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:.9rem}
+.meta b{color:var(--ink);font-weight:700}
+.badges{display:flex;flex-wrap:wrap;gap:6px}
+.badge{font-size:.8rem;font-weight:700;padding:4px 10px;border-radius:999px;background:var(--accent-soft);color:var(--ink);white-space:nowrap}
+.badge.ecm{background:var(--ecm-soft);color:var(--ecm)}
+.badge.free{background:var(--free-soft);color:var(--free)}
+.badge.off{background:transparent;border:1px solid var(--line);color:var(--muted)}
+.card .foot{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap}
+.price{font-family:var(--display);font-weight:700;font-size:1.2rem;font-variant-numeric:tabular-nums}
+.price small{font-family:var(--body);font-weight:400;font-size:.8rem;color:var(--muted);display:block}
+.go{display:inline-flex;align-items:center;gap:6px;text-decoration:none;background:var(--accent);color:var(--accent-ink);font-weight:700;padding:10px 16px;border-radius:999px}
+.tags{font-size:.82rem;color:var(--muted)}
+.rm{background:none;border:0;color:var(--muted);font-size:.82rem;cursor:pointer;text-decoration:underline}
+.rm.confirm{color:var(--warn);font-weight:700}
+
+.empty{border:1.5px dashed var(--line);border-radius:16px;padding:28px 18px;text-align:center;color:var(--muted)}
+.empty strong{display:block;color:var(--ink);font-family:var(--display);font-size:1.1rem;margin-bottom:4px}
+.note{font-size:.85rem;color:var(--muted);margin-top:22px}
+
+/* dialogs */
+dialog{border:0;border-radius:18px;padding:0;width:min(560px,calc(100vw - 24px));max-height:calc(100dvh - 24px);background:var(--surface);color:var(--ink)}
+dialog::backdrop{background:rgba(5,20,18,.45)}
+.dlg{padding:20px;display:flex;flex-direction:column;gap:14px}
+.dlg h2{font-size:1.3rem}
+.field{display:flex;flex-direction:column;gap:5px;min-width:0}
+.field label,.field .lbl{font-weight:700;font-size:.9rem}
+.field .hint{font-size:.8rem;color:var(--muted)}
+.field input,.field select{padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);width:100%}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media (max-width:480px){.two{grid-template-columns:1fr}}
+.pick{display:flex;flex-wrap:wrap;gap:6px}
+.pick label{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--line);border-radius:999px;padding:5px 11px;font-size:.85rem;cursor:pointer;font-weight:400}
+.pick input{accent-color:var(--accent)}
+.pick label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.err{color:var(--warn);font-size:.88rem;font-weight:700}
+.actions{display:flex;justify-content:flex-end;gap:8px;flex-wrap:wrap}
+.partner{display:flex;align-items:center;gap:14px;margin-top:16px;padding:10px 14px 10px 10px;border:1px solid var(--line);border-radius:16px;background:var(--surface);text-decoration:none;color:var(--ink);min-width:0}
+.partner .tile{flex:none;background:#FFFFFF;border-radius:12px;padding:6px 8px;display:flex;align-items:center;justify-content:center;border:1px solid var(--line)}
+.partner img{display:block;height:76px;width:auto}
+.partner .lbl{font-size:.75rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:700}
+.partner .nm{font-family:var(--display);font-weight:700;font-size:1rem;line-height:1.25}
+.partner .go2{font-size:.85rem;color:var(--accent);font-weight:700}
+.partner:hover{border-color:var(--accent)}
+.coffee{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:28px;padding-top:20px;border-top:1px solid var(--line);color:var(--muted);font-size:.92rem}
+.coffee-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:999px;background:#FFDD00;color:#1A1A1A;font-weight:700;text-decoration:none;font-size:.9rem}
+.coffee-btn:hover{filter:brightness(.95)}
+.hbtns{display:flex;gap:8px;flex-wrap:wrap}
+.pill{display:inline-block;min-width:1.5em;padding:0 6px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font-size:.8rem;margin-left:4px;font-variant-numeric:tabular-nums}
+.mine-list{display:flex;flex-direction:column;gap:6px}
+.mrow{display:flex;justify-content:space-between;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 14px;font-size:.92rem;min-width:0}
+.mrow span:first-child{min-width:0;overflow-wrap:anywhere}
+.st{font-size:.78rem;font-weight:700;padding:3px 9px;border-radius:999px;white-space:nowrap}
+.st.wait{background:var(--accent-soft);color:var(--ink)}
+.st.ok{background:var(--free-soft);color:var(--free)}
+.st.no{border:1px solid var(--line);color:var(--muted)}
+.qitem{border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:8px;background:var(--bg)}
+.qitem h3{font-size:1rem}
+.qitem .meta{font-size:.85rem}
+.qitem .meta a{color:var(--accent);font-weight:700}
+.qitem .actions{justify-content:flex-start;align-items:center}
+.btn.sm{padding:7px 14px;font-size:.88rem}
+textarea{width:100%;min-height:120px;padding:10px 12px;border-radius:10px;border:1.5px solid var(--line);background:var(--bg);font-size:.88rem;resize:vertical}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:700;z-index:20}
+@media (prefers-reduced-motion:no-preference){.card{animation:in .25s ease both}@keyframes in{from{transform:translateY(4px)}to{transform:none}}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div class="brand">
+      <h1>Psi<span>Formazione</span></h1>
+      <p>Corsi, workshop e master per psicologi e psicoterapeuti in Italia</p>
+    </div>
+    <div class="hbtns">
+      <button class="btn ghost" id="queueBtn" type="button" hidden>Da approvare <span class="pill" id="queueN">0</span></button>
+      <button class="btn" id="addBtn" type="button">+ Proponi formazione</button>
+    </div>
+  </header>
+  <a class="partner" href="https://www.asipp.it/" target="_blank" rel="noopener">
+    <span class="tile"><img src="asipp.png" alt="Logo ASIPP" width="86" height="76"></span>
+    <span style="display:flex;flex-direction:column;gap:2px;min-width:0"><span class="lbl">In collaborazione con</span><span class="nm">ASIPP – Associazione Scientifica Italiana di Psicologia Perinatale</span><span class="go2">Visita il sito ↗</span></span>
+  </a>
+  <section class="mine" id="mine" hidden>
+    <div class="section-label">Le tue proposte</div>
+    <div id="mineList" class="mine-list"></div>
+  </section>
+
+  <nav class="views" role="tablist" aria-label="Sezioni">
+    <button type="button" role="tab" data-view="corsi" aria-selected="true">Corsi e workshop</button>
+    <button type="button" role="tab" data-view="master" aria-selected="false">Master</button>
+  </nav>
+
+  <div class="search">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-3.5-3.5"></path></svg>
+    <input id="q" type="search" placeholder="Cerca per titolo, docente, ente, città…" aria-label="Cerca formazioni">
+  </div>
+
+  <p class="mintro" id="mintro" hidden>Master universitari (con CFU, che danno l'esonero ECM per l'anno di frequenza) e master di enti privati accreditati ECM. La data indicata è la scadenza per iscriversi.</p>
+  <div class="section-label">Scegli un argomento</div>
+  <div class="topics" id="topics"></div>
+
+  <div class="filters" id="filters">
+    <div class="frow">
+      <div class="fgroup" data-f="mode" role="group" aria-label="Modalità">
+        <button type="button" data-v="all" aria-pressed="true">Tutte</button>
+        <button type="button" data-v="online">Online</button>
+        <button type="button" data-v="presenza">In presenza</button>
+      </div>
+      <select id="region" aria-label="Regione"></select>
+      <div class="fgroup" data-f="mtype" role="group" aria-label="Tipo di master" id="mtypeGroup" hidden>
+        <button type="button" data-v="all" aria-pressed="true">Tutti i master</button>
+        <button type="button" data-v="uni">Universitari</button>
+        <button type="button" data-v="priv">Altri enti</button>
+      </div>
+      <div class="fgroup" data-f="ecm" role="group" aria-label="Crediti ECM">
+        <button type="button" data-v="all" aria-pressed="true">ECM: tutti</button>
+        <button type="button" data-v="yes">Con ECM</button>
+        <button type="button" data-v="no">Senza ECM</button>
+      </div>
+    </div>
+    <div class="frow">
+      <div class="fgroup" data-f="cost" role="group" aria-label="Costo">
+        <button type="button" data-v="all" aria-pressed="true">Ogni prezzo</button>
+        <button type="button" data-v="free">Gratuiti</button>
+        <button type="button" data-v="lt200">Fino a 200 €</button>
+        <button type="button" data-v="200-500">200–500 €</button>
+        <button type="button" data-v="gt500">Oltre 500 €</button>
+      </div>
+      <select id="sort" aria-label="Ordina">
+        <option value="date">Ordina: prima le più vicine</option>
+        <option value="price">Ordina: prezzo crescente</option>
+        <option value="ecm">Ordina: più crediti ECM</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="results-head">
+    <h2 id="resTitle">Tutte le formazioni</h2>
+    <span class="count" id="resCount"></span>
+  </div>
+  <div class="list" id="list">
+    <div class="empty"><strong>Caricamento delle formazioni…</strong>Tra un attimo trovi qui corsi, workshop e master, divisi per argomento.</div>
+  </div>
+
+  <p class="note">Prezzi e date sono quelli pubblicati dagli enti: verifica sempre sulla pagina del corso prima di iscriverti. Le formazioni già concluse spariscono da sole dall'elenco. Le nuove formazioni proposte dai colleghi compaiono dopo l'approvazione del creatore dell'app.</p>
+  <div class="coffee">
+    <span>Ti è utile PsiFormazione?</span>
+    <a class="coffee-btn" href="https://buymeacoffee.com/alexsofo" target="_blank" rel="noopener">☕ Offrimi un caffè</a>
+  </div>
+</div>
+
+<dialog id="dlg" aria-labelledby="dlgTitle">
+  <form class="dlg" id="form" novalidate>
+    <h2 id="dlgTitle">Proponi una formazione</h2>
+    <div class="field"><label for="f_titolo">Titolo *</label><input id="f_titolo" required maxlength="200"></div>
+    <div class="two">
+      <div class="field"><label for="f_ente">Ente / organizzatore *</label><input id="f_ente" required maxlength="120"></div>
+      <div class="field"><label for="f_docenti">Docenti</label><input id="f_docenti" maxlength="160"></div>
+    </div>
+    <div class="field"><label for="f_tipo">Tipo *</label>
+      <select id="f_tipo"><option>Corso</option><option>Workshop</option><option>Webinar</option><option>Convegno</option><option>Training</option><option>Master universitario</option><option>Master (ente privato)</option><option>Altro</option></select></div>
+    <div class="field"><label for="f_url">Link per approfondire e iscriversi *</label><input id="f_url" type="url" placeholder="https://" required></div>
+    <div class="field"><span class="lbl">Argomenti * <span class="hint">(uno o più)</span></span><div class="pick" id="f_topics"></div></div>
+    <div class="two">
+      <div class="field"><label for="f_modalita">Modalità *</label>
+        <select id="f_modalita"><option value="online">Online</option><option value="presenza">In presenza</option><option value="mista">Mista (presenza + online)</option></select></div>
+      <div class="field"><label for="f_regione">Regione</label><select id="f_regione"></select></div>
+    </div>
+    <div class="two">
+      <div class="field"><label for="f_citta">Città</label><input id="f_citta" maxlength="60"></div>
+      <div class="field"><label for="f_quando">Date (testo libero)</label><input id="f_quando" placeholder="es. 14-15 marzo 2027" maxlength="80"></div>
+    </div>
+    <div class="two">
+      <div class="field"><label for="f_inizio">Data di inizio</label><input id="f_inizio" type="date"></div>
+      <div class="field"><label for="f_fine">Ultimo giorno / scadenza</label><input id="f_fine" type="date"><span class="hint">Dopo questa data il corso si nasconde</span></div>
+    </div>
+    <div class="two">
+      <div class="field"><label for="f_costo">Costo (€, IVA inclusa)</label><input id="f_costo" type="number" min="0" step="0.01" inputmode="decimal"><span class="hint">0 = gratuito · vuoto = non indicato</span></div>
+      <div class="field"><label for="f_ecm">Crediti ECM</label>
+        <select id="f_ecm"><option value="">Non so</option><option value="si">Sì</option><option value="no">No</option></select></div>
+    </div>
+    <div class="field"><label for="f_crediti">Numero crediti ECM</label><input id="f_crediti" type="number" min="0" step="0.1" inputmode="decimal"></div>
+    <p class="err" id="formErr" hidden></p>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="cancelBtn">Annulla</button>
+      <button type="submit" class="btn" id="saveBtn">Invia la proposta</button>
+    </div>
+  </form>
+</dialog>
+
+<dialog id="queue" aria-labelledby="queueTitle">
+  <div class="dlg">
+    <h2 id="queueTitle">Proposte da approvare</h2>
+    <p style="margin:0;color:var(--muted);font-size:.9rem">Solo tu vedi questa lista. Una formazione compare nell'elenco pubblico solo quando la approvi.</p>
+    <div id="queueList" class="list"></div>
+    <div class="field">
+      <label for="pasteBox">Hai ricevuto una proposta per messaggio?</label>
+      <textarea id="pasteBox" placeholder="Incolla qui il messaggio completo (contiene un codice che inizia con PF1:)"></textarea>
+      <div class="actions" style="justify-content:flex-start"><button type="button" class="btn ghost sm" id="pasteBtn">Leggi la proposta</button></div>
+    </div>
+    <div class="actions"><button type="button" class="btn ghost" id="queueClose">Chiudi</button></div>
+  </div>
+</dialog>
+
+<dialog id="copyDlg" aria-labelledby="copyTitle">
+  <div class="dlg">
+    <h2 id="copyTitle">Invia la proposta</h2>
+    <p style="margin:0;color:var(--muted);font-size:.92rem">Copia o condividi questo messaggio e mandalo al creatore dell'app. La formazione comparirà nell'elenco dopo la sua approvazione.</p>
+    <textarea id="copyText" readonly></textarea>
+    <div class="actions">
+      <button type="button" class="btn ghost" id="copyClose">Chiudi</button>
+      <button type="button" class="btn ghost" id="shareBtn" hidden>Condividi</button>
+      <a class="btn ghost" id="mailBtn" hidden style="text-decoration:none">Invia per email</a>
+      <button type="button" class="btn" id="copyBtn">Copia messaggio</button>
+    </div>
+  </div>
+</dialog>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+
+/* CONFIGURAZIONE: email a cui i colleghi inviano le proposte (lascia "" per mostrare solo Copia/Condividi) */
+const EMAIL_PROPOSTE="";
+const TOPICS=["Ansia","Trauma","EMDR","Depressione e umore","Disturbi alimentari","Coppia e famiglia","Sessualità","Genitorialità","Psicologia perinatale","Età evolutiva e adolescenza","Neurosviluppo (autismo, ADHD, DSA)","Neuropsicologia","Disturbi di personalità","Dipendenze","Suicidio e autolesionismo","Mindfulness e compassion","Schema Therapy","CBT e ACT","Psicoanalisi","Corpo e terapie espressive","Regolazione emotiva e rabbia","Lutto e fine vita","Sonno","Psicodiagnosi e test","Psicologia forense","Psicologia scolastica","Psicologia della salute e psiconcologia","Professione e società"];
+const REGIONS=["Abruzzo","Basilicata","Calabria","Campania","Emilia-Romagna","Friuli Venezia Giulia","Lazio","Liguria","Lombardia","Marche","Molise","Piemonte","Puglia","Sardegna","Sicilia","Toscana","Trentino-Alto Adige","Umbria","Valle d'Aosta","Veneto"];
+const state={view:location.hash==="#master"?"master":"corsi",mtype:"all",topic:null,mode:"all",region:"",ecm:"all",cost:"all",sort:"date",q:""};
+const isMaster=it=>/master/i.test(it.tipo||"");
+const isUni=it=>/universitari/i.test(it.tipo||"");
+let items=[]; let db=null; let canEdit=false; let canWrite=null; let loaded=false;
+let isOwner=false, uid=null, myProps={}, queueItems=[], pasted=[], editing=null;
+const $=s=>document.querySelector(s);
+const today=new Date().toISOString().slice(0,10);
+
+function esc(s){return String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]))}
+function safeUrl(u){try{const x=new URL(u);return /^https?:$/.test(x.protocol)?x.href:"#"}catch{return "#"}}
+function fmtEuro(n){return n.toLocaleString("it-IT",{minimumFractionDigits:n%1?2:0,maximumFractionDigits:2})+" €"}
+function active(it){const end=it.dataFine||it.dataInizio;return !end||end>=today}
+function sortKey(it){return it.dataInizio&&it.dataInizio>=today?it.dataInizio:(it.dataFine||it.dataInizio||"9999")}
+
+function matches(it,ignoreTopic){
+  if(!active(it))return false;
+  if(state.view==="master"?!isMaster(it):isMaster(it))return false;
+  if(state.view==="master"&&state.mtype==="uni"&&!isUni(it))return false;
+  if(state.view==="master"&&state.mtype==="priv"&&isUni(it))return false;
+  if(!ignoreTopic&&state.topic&&!(it.argomenti||[]).includes(state.topic))return false;
+  if(state.mode==="online"&&it.modalita==="presenza")return false;
+  if(state.mode==="presenza"&&it.modalita==="online")return false;
+  if(state.region&&it.regione!==state.region)return false;
+  if(state.ecm==="yes"&&it.ecm!==true)return false;
+  if(state.ecm==="no"&&it.ecm!==false)return false;
+  const c=it.costo;
+  if(state.cost==="free"&&c!==0)return false;
+  if(state.cost==="lt200"&&!(typeof c==="number"&&c<=200))return false;
+  if(state.cost==="200-500"&&!(typeof c==="number"&&c>200&&c<=500))return false;
+  if(state.cost==="gt500"&&!(typeof c==="number"&&c>500))return false;
+  if(state.q){const hay=[it.titolo,it.ente,it.docenti,it.citta,it.regione,(it.argomenti||[]).join(" ")].join(" ").toLowerCase();
+    if(!state.q.toLowerCase().split(/\s+/).every(w=>hay.includes(w)))return false;}
+  return true;
+}
+
+function renderTopics(){
+  const counts={};TOPICS.forEach(t=>counts[t]=0);
+  items.forEach(it=>{if(matches(it,true))(it.argomenti||[]).forEach(t=>{if(t in counts)counts[t]++})});
+  const all=items.filter(it=>matches(it,true)).length;
+  const btn=(t,label,n)=>`<button type="button" class="topic" data-t="${esc(t)}" aria-pressed="${state.topic===t}">${esc(label)}<span class="n">${loaded?n:""}</span></button>`;
+  $("#topics").innerHTML=btn("", "Tutti gli argomenti", all).replace('aria-pressed="false"','aria-pressed="'+(state.topic===null)+'"')+TOPICS.filter(t=>!loaded||counts[t]>0||state.topic===t).map(t=>btn(t,t,counts[t])).join("");
+}
+
+function card(it){
+  const where=it.modalita==="online"?"Online":(it.citta||it.regione||"Sede indicata sul sito")+(it.modalita==="mista"&&!/online/i.test(it.citta||"")?" + online":"");
+  let ecmB;
+  if(it.ecm===true)ecmB=`<span class="badge ecm">${it.crediti?String(it.crediti).replace(".",",")+" ECM":"Con ECM"}</span>`;
+  else if(it.ecm===false&&isUni(it))ecmB=`<span class="badge ecm">CFU · esonero ECM</span>`;
+  else if(it.ecm===false)ecmB=`<span class="badge off">Senza ECM</span>`;
+  else ecmB=`<span class="badge off">ECM da verificare</span>`;
+  const modeB=`<span class="badge">${it.modalita==="online"?"Online":it.modalita==="mista"?"Mista":"In presenza"}</span>`;
+  let price;
+  if(it.costo===0)price=`<span class="badge free" style="font-size:.95rem">Gratuito</span>`;
+  else if(typeof it.costo==="number")price=`<span class="price">${fmtEuro(it.costo)}${it.notaCosto?`<small>${esc(it.notaCosto)}</small>`:""}</span>`;
+  else price=`<span class="price" style="font-size:1rem;color:var(--muted)">Prezzo sul sito${it.notaCosto?`<small>${esc(it.notaCosto)}</small>`:""}</span>`;
+  const rm=canEdit?`<button type="button" class="rm" data-rm="${esc(it.id)}">Rimuovi</button>`:"";
+  return `<article class="card">
+    <h3>${esc(it.titolo)}</h3>
+    <div class="meta"><span><b>${esc(it.ente)}</b></span>${it.docenti?`<span>${esc(it.docenti)}</span>`:""}</div>
+    <div class="meta"><span><b>Quando</b> ${esc(it.quando||"date sul sito")}</span><span><b>Dove</b> ${esc(where)}</span></div>
+    <div class="badges">${modeB}${ecmB}${it.tipo?`<span class="badge off">${esc(it.tipo)}</span>`:""}</div>
+    <div class="tags">${esc((it.argomenti||[]).join(" · "))}</div>
+    <div class="foot">${price}<span style="display:flex;gap:12px;align-items:center">${rm}<a class="go" href="${esc(safeUrl(it.url))}" target="_blank" rel="noopener">Vai al corso ↗</a></span></div>
+  </article>`;
+}
+
+function render(){
+  const M=state.view==="master";
+  document.querySelectorAll(".views button").forEach(b=>b.setAttribute("aria-selected",b.dataset.view===state.view));
+  $("#mintro").hidden=!M;$("#mtypeGroup").hidden=!M;
+  renderTopics();
+  $("#resTitle").textContent=M?(state.topic?"Master · "+state.topic:"Tutti i master"):(state.topic||"Tutti i corsi e workshop");
+  if(!loaded)return;
+  let res=items.filter(it=>matches(it,false));
+  if(state.sort==="price")res.sort((a,b)=>(a.costo??1e9)-(b.costo??1e9));
+  else if(state.sort==="ecm")res.sort((a,b)=>(b.crediti||0)-(a.crediti||0));
+  else res.sort((a,b)=>sortKey(a).localeCompare(sortKey(b)));
+  $("#resCount").textContent=M?(res.length===1?"1 master":res.length+" master"):(res.length===1?"1 formazione":res.length+" formazioni");
+  if(!items.length){$("#list").innerHTML=`<div class="empty"><strong>Ancora nessuna formazione</strong>Tocca “Aggiungi formazione” per inserire la prima.</div>`;return}
+  if(!res.length){$("#list").innerHTML=`<div class="empty"><strong>Nessuna formazione con questi filtri</strong><button type="button" class="linkish" id="resetF">Togli i filtri</button></div>`;return}
+  $("#list").innerHTML=res.map(card).join("");
+}
+
+document.querySelector(".views").addEventListener("click",e=>{const b=e.target.closest("[data-view]");if(!b||b.dataset.view===state.view)return;
+  state.view=b.dataset.view;state.topic=null;render()});
+$("#topics").addEventListener("click",e=>{const b=e.target.closest(".topic");if(!b)return;state.topic=b.dataset.t||null;render();
+  $("#filters").scrollIntoView({behavior:matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"})});
+document.querySelectorAll(".fgroup").forEach(g=>g.addEventListener("click",e=>{const b=e.target.closest("button");if(!b)return;
+  state[g.dataset.f]=b.dataset.v;g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x===b));render()}));
+$("#region").innerHTML=`<option value="">Tutta Italia</option>`+REGIONS.map(r=>`<option>${r}</option>`).join("");
+$("#region").addEventListener("change",e=>{state.region=e.target.value;if(state.region&&state.mode==="online"){state.mode="all";document.querySelectorAll('[data-f="mode"] button').forEach(x=>x.setAttribute("aria-pressed",x.dataset.v==="all"))}render()});
+$("#sort").addEventListener("change",e=>{state.sort=e.target.value;render()});
+let qT;$("#q").addEventListener("input",e=>{clearTimeout(qT);qT=setTimeout(()=>{state.q=e.target.value.trim();render()},150)});
+$("#list").addEventListener("click",async e=>{
+  if(e.target.id==="resetF"){Object.assign(state,{mode:"all",region:"",ecm:"all",cost:"all",mtype:"all",q:""});$("#q").value="";$("#region").value="";
+    document.querySelectorAll(".fgroup").forEach(g=>g.querySelectorAll("button").forEach(x=>x.setAttribute("aria-pressed",x.dataset.v==="all")));render();return}
+  const b=e.target.closest("[data-rm]");if(!b||!db)return;
+  if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="Conferma rimozione";setTimeout(()=>{if(b.isConnected){b.classList.remove("confirm");b.textContent="Rimuovi"}},4000);return}
+  try{await db.doc("formazioni/"+b.dataset.rm).delete();toast("Formazione rimossa")}catch(err){toast("Non è stato possibile rimuoverla")}
+});
+
+function toast(msg){const t=$("#toast");t.textContent=msg;t.hidden=false;clearTimeout(toast._t);toast._t=setTimeout(()=>t.hidden=true,2600)}
+
+/* form */
+$("#f_topics").innerHTML=TOPICS.map((t,i)=>`<label><input type="checkbox" id="ft_${i}" value="${esc(t)}">${esc(t)}</label>`).join("");
+$("#f_regione").innerHTML=`<option value="">—</option>`+REGIONS.map(r=>`<option>${r}</option>`).join("");
+const newId=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,8);
+
+function openForm(prefill){
+  $("#form").reset();editing=prefill||null;
+  $("#dlgTitle").textContent=prefill?"Controlla e approva":isOwner?"Aggiungi una formazione":"Proponi una formazione";
+  $("#saveBtn").textContent=prefill?"Approva e pubblica":isOwner?"Pubblica formazione":"Invia la proposta";
+  if(prefill){const p=prefill.data;
+    $("#f_titolo").value=p.titolo||"";$("#f_ente").value=p.ente||"";$("#f_docenti").value=p.docenti||"";$("#f_url").value=p.url||"";
+    if(p.tipo)$("#f_tipo").value=p.tipo;$("#f_modalita").value=p.modalita||"online";$("#f_regione").value=p.regione||"";
+    $("#f_citta").value=p.citta||"";$("#f_quando").value=p.quando||"";$("#f_inizio").value=p.dataInizio||"";$("#f_fine").value=p.dataFine||"";
+    $("#f_costo").value=typeof p.costo==="number"?p.costo:"";$("#f_ecm").value=p.ecm===true?"si":p.ecm===false?"no":"";$("#f_crediti").value=p.crediti??"";
+    (p.argomenti||[]).forEach(t=>{const i=TOPICS.indexOf(t);if(i>=0)$("#ft_"+i).checked=true});
+  }else{
+    if(state.topic){const i=TOPICS.indexOf(state.topic);if(i>=0)$("#ft_"+i).checked=true}
+    if(state.view==="master")$("#f_tipo").value="Master universitario";
+  }
+  $("#formErr").hidden=true;$("#dlg").showModal();
+}
+function readForm(){
+  const v=id=>$(id).value.trim();
+  const args=[...document.querySelectorAll("#f_topics input:checked")].map(x=>x.value);
+  const errs=[];
+  if(!v("#f_titolo"))errs.push("il titolo");if(!v("#f_ente"))errs.push("l'ente");
+  if(safeUrl(v("#f_url"))==="#")errs.push("un link valido (che inizi con https://)");
+  if(!args.length)errs.push("almeno un argomento");
+  const mod=$("#f_modalita").value;
+  if(mod!=="online"&&!$("#f_regione").value)errs.push("la regione (per i corsi in presenza)");
+  const costoRaw=v("#f_costo"), credRaw=v("#f_crediti"), ecmSel=$("#f_ecm").value;
+  const doc={titolo:v("#f_titolo"),ente:v("#f_ente"),docenti:v("#f_docenti")||null,url:safeUrl(v("#f_url")),argomenti:args,modalita:mod,
+    regione:mod==="online"?null:$("#f_regione").value,citta:mod==="online"?null:(v("#f_citta")||null),quando:v("#f_quando")||null,
+    dataInizio:v("#f_inizio")||null,dataFine:v("#f_fine")||null,costo:costoRaw===""?null:Number(costoRaw),
+    ecm:ecmSel==="si"||Number(credRaw)>0?true:ecmSel==="no"?false:null,crediti:credRaw===""?null:Number(credRaw),
+    tipo:$("#f_tipo").value,aggiuntoIl:new Date().toISOString(),fonte:"utente"};
+  return {doc,errs};
+}
+function showErr(t){$("#formErr").textContent=t;$("#formErr").hidden=false}
+function errMsg(err){return err&&err.code==="quota_exceeded"?"L'archivio è pieno: rimuovi qualche formazione conclusa e riprova.":"Salvataggio non riuscito, riprova tra poco."}
+
+/* proposal as message (for viewers who cannot write) */
+const enc=o=>btoa(unescape(encodeURIComponent(JSON.stringify(o))));
+const dec=s=>JSON.parse(decodeURIComponent(escape(atob(s))));
+function proposalText(d){
+  const costo=d.costo===0?"Gratuito":typeof d.costo==="number"?fmtEuro(d.costo):"non indicato";
+  const ecm=d.ecm===true?(d.crediti?d.crediti+" crediti":"sì"):d.ecm===false?"no":"non so";
+  return `Proposta di formazione per PsiFormazione\n\nTitolo: ${d.titolo}\nEnte: ${d.ente}\nTipo: ${d.tipo}\nDate: ${d.quando||"-"}\nDove: ${d.modalita==="online"?"Online":(d.citta||d.regione||"")+" ("+d.modalita+")"}\nCosto: ${costo}\nECM: ${ecm}\nArgomenti: ${d.argomenti.join(", ")}\nLink: ${d.url}\n\nCodice per l'approvazione (non modificarlo):\nPF1:${enc(d)}`;
+}
+function showCopy(d){$("#copyText").value=proposalText(d);if(EMAIL_PROPOSTE){const m=$("#mailBtn");m.hidden=false;m.href="mailto:"+EMAIL_PROPOSTE+"?subject="+encodeURIComponent("Proposta per PsiFormazione: "+d.titolo)+"&body="+encodeURIComponent($("#copyText").value)}$("#dlg").close();$("#copyDlg").showModal()}
+$("#copyClose").addEventListener("click",()=>$("#copyDlg").close());
+$("#copyBtn").addEventListener("click",()=>{const t=$("#copyText");
+  navigator.clipboard.writeText(t.value).then(()=>toast("Messaggio copiato")).catch(()=>{t.focus();t.select();toast("Seleziona il testo e copialo")})});
+
+$("#addBtn").addEventListener("click",()=>openForm(null));
+$("#cancelBtn").addEventListener("click",()=>$("#dlg").close());
+$("#form").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const {doc,errs}=readForm();
+  if(errs.length){showErr("Manca "+errs.join(", ")+".");return}
+  $("#saveBtn").disabled=true;
+  try{
+    if(editing){await approve(editing,doc);$("#dlg").close();return}
+    if(isOwner&&db){await db.collection("formazioni").add(doc);$("#dlg").close();toast("Formazione pubblicata");return}
+    if(db&&uid&&canWrite!==false){
+      try{const pid=newId();await db.doc("proposte/"+uid).set({voci:{...myProps,[pid]:{...doc,stato:"in attesa"}}});
+        $("#dlg").close();toast("Proposta inviata: la vedrai pubblicata dopo l'approvazione");return}
+      catch(err){if(!(err&&err.code==="invalid_argument"))throw err;canWrite=false}
+    }
+    showCopy(doc);
+  }catch(err){showErr(errMsg(err))}
+  finally{$("#saveBtn").disabled=false}
+});
+
+/* the viewer's own proposals */
+function renderMine(){
+  const list=Object.values(myProps).sort((a,b)=>(b.aggiuntoIl||"").localeCompare(a.aggiuntoIl||""));
+  $("#mine").hidden=isOwner||!list.length;
+  $("#mineList").innerHTML=list.map(p=>{const s=p.stato==="approvata"?'<span class="st ok">Pubblicata</span>':p.stato==="rifiutata"?'<span class="st no">Non approvata</span>':'<span class="st wait">In attesa di approvazione</span>';
+    return `<div class="mrow"><span>${esc(p.titolo)}</span>${s}</div>`}).join("");
+}
+
+/* owner approval queue */
+function renderQueue(){
+  const all=[...queueItems,...pasted];
+  $("#queueN").textContent=all.length;
+  $("#queueList").innerHTML=all.length?all.map((q,i)=>{const p=q.data;return `<div class="qitem">
+    <h3>${esc(p.titolo)}</h3>
+    <div class="meta"><span><b>${esc(p.ente)}</b></span><span>${esc(p.tipo||"")}</span><span>${esc(p.quando||"date non indicate")}</span><span>${esc(p.modalita==="online"?"Online":(p.citta||p.regione||""))}</span></div>
+    <div class="meta"><span>${esc((p.argomenti||[]).join(" · "))}</span></div>
+    <div class="meta"><a href="${esc(safeUrl(p.url))}" target="_blank" rel="noopener">Apri il link per verificarla ↗</a>${q.from==="msg"||p.viaMessaggio?"<span>arrivata per messaggio</span>":""}</div>
+    <div class="actions"><button type="button" class="btn sm" data-q="ok" data-i="${i}">Approva</button><button type="button" class="btn ghost sm" data-q="edit" data-i="${i}">Modifica e approva</button><button type="button" class="rm" data-q="no" data-i="${i}">Rifiuta</button></div>
+  </div>`}).join(""):`<div class="empty"><strong>Nessuna proposta in attesa</strong>Quando un collega propone una formazione la trovi qui.</div>`;
+}
+async function setStatus(q,stato){
+  if(q.from==="db")await db.doc("proposte/"+q.uid).update({voci:{[q.pid]:{stato}}});
+  else pasted=pasted.filter(x=>x!==q);
+  renderQueue();
+}
+async function approve(q,doc){
+  const d={...(doc||q.data)};delete d.stato;delete d.viaMessaggio;d.fonte=q.from==="msg"||q.data.viaMessaggio?"proposta-messaggio":"proposta-utente";
+  await db.collection("formazioni").doc(q.pid).set(d);
+  await setStatus(q,"approvata");toast("Formazione pubblicata");
+}
+$("#queueList").addEventListener("click",async e=>{
+  const b=e.target.closest("[data-q]");if(!b)return;const q=[...queueItems,...pasted][+b.dataset.i];if(!q)return;
+  try{
+    if(b.dataset.q==="ok"){b.disabled=true;await approve(q)}
+    else if(b.dataset.q==="edit"){$("#queue").close();openForm(q)}
+    else{if(!b.classList.contains("confirm")){b.classList.add("confirm");b.textContent="Conferma rifiuto";return}
+      await setStatus(q,"rifiutata");toast("Proposta rifiutata")}
+  }catch(err){toast("Operazione non riuscita, riprova")}
+});
+$("#queueBtn").addEventListener("click",()=>{renderQueue();$("#queue").showModal()});
+$("#queueClose").addEventListener("click",()=>$("#queue").close());
+$("#pasteBtn").addEventListener("click",()=>{
+  const m=$("#pasteBox").value.match(/PF1:([A-Za-z0-9+/=]+)/);
+  if(!m){toast("Nel testo non trovo il codice PF1:");return}
+  try{const d=dec(m[1]);
+    if(!d||typeof d.titolo!=="string"||typeof d.ente!=="string"||!Array.isArray(d.argomenti))throw 0;
+    const clean={titolo:d.titolo.slice(0,200),ente:d.ente.slice(0,120),docenti:d.docenti?String(d.docenti).slice(0,160):null,url:safeUrl(d.url),
+      argomenti:d.argomenti.filter(t=>TOPICS.includes(t)),modalita:["online","presenza","mista"].includes(d.modalita)?d.modalita:"online",
+      regione:REGIONS.includes(d.regione)?d.regione:null,citta:d.citta?String(d.citta).slice(0,60):null,quando:d.quando?String(d.quando).slice(0,80):null,
+      dataInizio:/^\d{4}-\d\d-\d\d$/.test(d.dataInizio)?d.dataInizio:null,dataFine:/^\d{4}-\d\d-\d\d$/.test(d.dataFine)?d.dataFine:null,
+      costo:typeof d.costo==="number"&&d.costo>=0?d.costo:null,ecm:d.ecm===true||d.ecm===false?d.ecm:null,crediti:typeof d.crediti==="number"?d.crediti:null,
+      tipo:d.tipo?String(d.tipo).slice(0,40):"Corso",aggiuntoIl:new Date().toISOString()};
+    const pid=newId();clean.viaMessaggio=true;clean.stato="in attesa";
+    if(db&&uid){const ref=db.doc("proposte/"+uid);
+      ref.update({voci:{[pid]:clean}}).catch(()=>ref.get().then(s=>ref.set({voci:{...((s.exists&&s.data().voci)||{}),[pid]:clean}})))
+        .then(()=>{$("#pasteBox").value="";toast("Proposta aggiunta alla lista")}).catch(()=>toast("Non sono riuscito a salvarla, riprova"));return}
+    pasted.push({from:"msg",pid,data:clean});$("#pasteBox").value="";renderQueue();toast("Proposta aggiunta alla lista")}
+  catch{toast("Il codice non è leggibile: chiedi di rinviare il messaggio intero")}
+});
+
+render();
+
+(async()=>{
+  try{const r=await fetch("formazioni.json",{cache:"no-cache"});if(!r.ok)throw 0;
+    items=(await r.json()).filter(x=>x&&x.titolo);loaded=true;render()}
+  catch{$("#list").innerHTML=`<div class="empty"><strong>Le formazioni non si caricano</strong>Ricarica la pagina tra qualche istante.</div>`}
+})();
+if(navigator.share)$("#shareBtn").hidden=false;
+$("#shareBtn").addEventListener("click",()=>navigator.share({title:"Proposta per PsiFormazione",text:$("#copyText").value}).catch(()=>{}));
+function showNoDb_unused(){$("#list").innerHTML=`<div class="empty"><strong>Accedi per vedere le formazioni</strong>L'elenco si carica quando apri l'app su claude.ai con il tuo account.</div>`}
+</script>
+</body>
+</html>
